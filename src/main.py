@@ -2,30 +2,56 @@
 from config import TableConfig
 from db import DatabaseManager
 
-# Initialize table configuration and database manager
-config = TableConfig('config.json')
-db_manager = DatabaseManager('example.db')
+def display_records(rows):
+    if not rows:
+        print("No records found.")
+    else:
+        print("Records:")
+        for row in rows:
+            print(row)
 
-# Get table details from the configuration
-table_name = config.get_table_name()
-columns = config.get_columns()
+def main():
+    config = TableConfig('config.json')
+    db_manager = DatabaseManager('example.db')
 
-# Create table
-db_manager.create_table(table_name, columns)
+    table_name = config.get_table_name()
 
-# Insert data into the table
-data_to_insert = [
-    ('John', 'John@example.com'),
-    ('Doe', 'Doe@example.com')
-]
+    while True:
+        print("\nMenu:")
+        print("1. Add a record")
+        print("2. Delete a record")
+        print("3. List all records")
+        print("4. Exit")
 
-# db_manager.insert_data(table_name, data_to_insert)
-db_manager.insert_data_unique(table_name, data_to_insert)
+        choice = input("Enter your choice (1-4): ")
 
-# Retrieve and display data from the table
-rows = db_manager.fetch_data(table_name)
-for row in rows:
-    print(row)
+        if choice == '1':
+            name = input("Enter name: ")
+            email = input("Enter email: ")
+            db_manager.insert_data_unique(table_name, [(name, email)])
+            print("Record added successfully!")
 
-# Close the connection
-db_manager.close_connection()
+        elif choice == '2':
+            email_to_delete = input("Enter email to delete: ")
+            delete_query = f"DELETE FROM {table_name} WHERE email = ?"
+            db_manager.cursor.execute(delete_query, (email_to_delete,))
+            if db_manager.cursor.rowcount == 0:
+                print("Record not found.")
+            else:
+                db_manager.conn.commit()
+                print("Record deleted successfully!")
+
+        elif choice == '3':
+            rows = db_manager.fetch_data(table_name)
+            display_records(rows)
+
+        elif choice == '4':
+            break
+
+        else:
+            print("Invalid choice. Please enter a valid option.")
+
+    db_manager.close_connection()
+
+if __name__ == "__main__":
+    main()
