@@ -31,6 +31,11 @@ class DatabaseManager:
         self.cursor.executemany(insert_query, data)
         self.conn.commit()
 
+    def insert_data_unique(self, table_name, data):
+        insert_query = f"INSERT OR REPLACE INTO {table_name} (name, email) VALUES (?, ?)"
+        self.cursor.executemany(insert_query, data)
+        self.conn.commit()
+
     def fetch_data(self, table_name):
         self.cursor.execute(f"SELECT * FROM {table_name}")
         return self.cursor.fetchall()
