@@ -18,6 +18,9 @@ class DatabaseManager:
             if column.get("primary_key"):
                 create_table_query += " PRIMARY KEY"
 
+            if column.get("unique"):
+                create_table_query += " UNIQUE"
+
             create_table_query += ","
         create_table_query = create_table_query.rstrip(",") + ")"
         self.cursor.execute(create_table_query)
