@@ -1,32 +1,51 @@
+import json
 import sqlite3
 
-# Step 1: Connect to a database or create one if it doesn't exist
-conn = sqlite3.connect('example.db')
+# Read the table configuration from JSON file
+with open('config.json', encoding='utf-8') as config_file:
+    table_config = json.load(config_file)
 
-# Step 2: Create a cursor object to interact with the database
+# Extract table details from the configuration
+table_name = table_config["table_name"]
+columns = table_config["columns"]
+
+# Connect to an SQLite database or create it if it doesn't exist
+conn = sqlite3.connect('example.db')
 cursor = conn.cursor()
 
-# Step 3: Create a table
-cursor.execute('''CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    email TEXT NOT NULL
-                )''')
+# Create the table based on the configuration
+create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} ("
 
-# Step 4: Insert data into the table
-cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", ('John', 'John@example.com'))
-cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)", ('Doe', 'Doe@example.com'))
+for column in columns:
+    column_name = column["name"]
+    column_type = column["type"]
+    create_table_query += f"{column_name} {column_type}"
 
-# Step 5: Save (commit) the changes
+    if column.get("not_null"):
+        create_table_query += " NOT NULL"
+
+    if column.get("primary_key"):
+        create_table_query += " PRIMARY KEY"
+
+    create_table_query += ","
+
+create_table_query = create_table_query.rstrip(",") + ")"
+cursor.execute(create_table_query)
+
+# Insert data into the table
+data_to_insert = [
+    ('John', 'John@example.com'),
+    ('Doe', 'Doe@example.com')
+]
+insert_query = f"INSERT INTO {table_name} (name, email) VALUES (?, ?)"
+cursor.executemany(insert_query, data_to_insert)
 conn.commit()
 
-# Step 6: Retrieve data from the table
-cursor.execute("SELECT * FROM users")
+# Retrieve and display data from the table
+cursor.execute(f"SELECT * FROM {table_name}")
 rows = cursor.fetchall()
-
-# Step 7: Display the retrieved data
 for row in rows:
     print(row)
 
-# Step 8: Close the connection
+# Close the connection
 conn.close()
