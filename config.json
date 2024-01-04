@@ -1,6 +1,6 @@
 {
     "encryption_key": "hQZsP29M8j93WSZa/mcKT3TFPdesP6eOE7M8KzKsQYM=",
-    "database_name": "example.db",
+    "database_name": "example.db.enc",
     "table_name": "users",
     "columns": [
         {
@@ -20,6 +20,6 @@
             "unique": true
         }
     ],
-    "emd5": "1122c0013e51c49e5c5810c722120147",
-    "pmd5": "d9f999bab0ecc1c51a06f3c42835e436"
+    "emd5": "51ab46cb42a7cf29b670ce6cb7a223bc",
+    "pmd5": "0b4426301a9bb60ee108ec9cecb32c71"
 }

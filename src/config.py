@@ -4,7 +4,7 @@ class TableConfig:
     """Class to encapsulate the config.json capability"""
 
     config_file = "config.json"
-
+    
     def __init__(self, config_file):
         self.config_file = config_file
         with open(config_file,encoding='utf-8') as file:
