@@ -1,3 +1,4 @@
+"""Database Manager class """
 import sqlite3
 
 class DatabaseManager:
